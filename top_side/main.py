@@ -1,7 +1,12 @@
-import input
+from input import controller
 import socket
 import time
 import math
+
+mc = 0
+move_controller = controller(mc)
+ac = 1
+arm_controller = controller(ac)
 
 def div_vec(v : tuple[float, float], n : float) -> tuple[float, float]:
     x, y = v
@@ -22,12 +27,12 @@ top_r_direction = (-1/math.sqrt(2), 1/math.sqrt(2))
 bot_l_direction = (-1/math.sqrt(2), 1/math.sqrt(2))
 bot_r_direction = (1/math.sqrt(2), 1/math.sqrt(2))
 
-client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-client.bind(("192.168.1.155", 8888))
+#client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#client.bind(("192.168.1.155", 8888))
 
-while True:
-    translation = input.left_stick
-    rotation, v_translation = input.right_stick
+def logic(controller):
+    translation = controller.left_stick
+    rotation, v_translation = controller.right_stick
 
     # Normalization and dead zone for directional translation input
     translation_mag = magnitude(translation)
@@ -68,9 +73,16 @@ while True:
 
     # Create and send packet
     packet = ", ".join([str(front_left), str(front_right), str(back_left), str(back_right), str(top_front), str(top_back)])
-    print(packet)
-    client.sendto(packet.encode(), ("192.168.1.177", 8888))
-    message, addr = client.recvfrom(2000)
+    return packet
+    
+while True:
+    mc_packet = logic(move_controller)
+    ac_packet = logic(arm_controller)
+    
+    print(mc, mc_packet)
+    print(ac, ac_packet)
+    # client.sendto(packet.encode(), ("192.168.1.177", 8888))
+    # message, addr = client.recvfrom(2000)
     #print(message)
 
     time.sleep(0.1)
