@@ -6,7 +6,11 @@ class controller:
     def __init__(self, index):
         self.right_stick = (0, 0)
         self.left_stick = (0, 0)
-        self.x_pressed = False
+        self.y_pressed = 0
+        self.x_pressed = 0
+        self.b_pressed = 0
+        self.btn_tl = 0
+        self.btn_tr = 0
         self.device = inputs.devices.gamepads[index]
         self._thread()
 
@@ -27,13 +31,20 @@ class controller:
                         self.right_stick = (self.right_stick[0], event.state / 32768)
                         break
                     case "BTN_NORTH":
-                        self.x_pressed = (event.state == 1)
+                        self.y_pressed = ('1' if event.state == 1 else '0')
                         break
-                    case "SYN_REPORT": break # don't care
+                    case "BTN_EAST":
+                        self.b_pressed = ('1' if event.state == 1 else '0')
+                    case "BTN_WEST":
+                        self.x_pressed = ('1' if event.state == 1 else '0')
+                    case "BTN_TL":
+                        self.btn_tl = ('1' if event.state == 1 else '0')
+                    case "BTN_TR":
+                        self.btn_tr = ('1' if event.state == 1 else '0')
+                    case "SYN_REPORT": break # don't care YET
                     case _:
                         print(str(event.code) + ": " + str(event.state))
     
     def _thread(self):
         _run_thread = threading.Thread(target=self._run, daemon=True)
         _run_thread.start()
-

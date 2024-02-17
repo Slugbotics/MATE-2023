@@ -34,6 +34,13 @@ def logic(controller):
     translation = controller.left_stick
     rotation, v_translation = controller.right_stick
 
+    BTN_X = controller.x_pressed
+    BTN_Y = controller.y_pressed
+    BTN_B = controller.b_pressed
+
+    Left_Bumper = controller.btn_tl
+    Right_Bumper = controller.btn_tr
+
     # Normalization and dead zone for directional translation input
     translation_mag = magnitude(translation)
     if translation_mag > 1:
@@ -72,16 +79,21 @@ def logic(controller):
     top_back = round(v_translation * 50) + 50
 
     # Create and send packet
-    packet = ", ".join([str(front_left), str(front_right), str(back_left), str(back_right), str(top_front), str(top_back)])
+    packet = ", ".join([str(front_left), str(front_right), str(back_left), str(back_right), str(top_front), str(top_back),
+                         str(BTN_X), str(BTN_Y), str(BTN_B), str(Left_Bumper), str(Right_Bumper)])
     return packet
-    
+
+#Rather than sending two packets, perhaps we have both of the methods add their string array onto the packet itself,
+#create a method for the packet and just have the other methods add to the packet
+     
 while True:
     mc_packet = logic(move_controller)
     ac_packet = logic(arm_controller)
-    
-    print(mc, mc_packet)
-    print(ac, ac_packet)
-    # client.sendto(packet.encode(), ("192.168.1.177", 8888))
+
+    packet = '['+ str(mc) + ']' + ', ' + mc_packet + ', ' + '[' + str(ac) + ']' + ', ' + ac_packet
+    print(packet)
+    # client.sendto(mc_packet.encode(), ("192.168.1.177", 8888))
+    # client.sendto(ac_packet.encode(), ("192.168.1.177", 8888))
     # message, addr = client.recvfrom(2000)
     #print(message)
 
