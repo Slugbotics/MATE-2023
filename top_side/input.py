@@ -1,37 +1,39 @@
 import inputs
 import threading
 
-right_stick = (0, 0)
-left_stick = (0, 0)
+#index is the controller value [First controller: 0, Second Controller: 1, etc.]
+class controller:
+    def __init__(self, index):
+        self.right_stick = (0, 0)
+        self.left_stick = (0, 0)
+        self.x_pressed = False
+        self.device = inputs.devices.gamepads[index]
+        self._thread()
 
-x_pressed = False
-
-def _run():
-    global right_stick
-    global left_stick
-    global x_pressed
-    while True:
-        for device in inputs.devices.gamepads:
-            for event in device.read():
+    def _run(self):
+        while True:
+            for event in self.device.read():
                 match str(event.code):
                     case "ABS_X":
-                        left_stick = (event.state / 32768, left_stick[1])
+                        self.left_stick = (event.state / 32768, self.left_stick[1])
                         break
                     case "ABS_Y":
-                        left_stick = (left_stick[0], event.state / 32768)
+                        self.left_stick = (self.left_stick[0], event.state / 32768)
                         break
                     case "ABS_RX":
-                        right_stick = (event.state / 32768, right_stick[1])
+                        self.right_stick = (event.state / 32768, self.right_stick[1])
                         break
                     case "ABS_RY":
-                        right_stick = (right_stick[0], event.state / 32768)
+                        self.right_stick = (self.right_stick[0], event.state / 32768)
                         break
                     case "BTN_NORTH":
-                        x_pressed = (event.state == 1)
+                        self.x_pressed = (event.state == 1)
                         break
                     case "SYN_REPORT": break # don't care
                     case _:
                         print(str(event.code) + ": " + str(event.state))
+    
+    def _thread(self):
+        _run_thread = threading.Thread(target=self._run, daemon=True)
+        _run_thread.start()
 
-_run_thread = threading.Thread(target=_run, daemon=True)
-_run_thread.start()
