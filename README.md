@@ -1,8 +1,12 @@
 # MATE-2023
 
-## Structure
+## JONATHAN DON'T REMOVE THIS
 
-## Git Standards
+## Things To Do
+- preliminary testing for arm team's waterproof servo
+- get more servos (maybe waterproof them)
+- cad the gripper
+- figure out packet business
 
 ## Installation
 - Install virtualenv https://virtualenv.pypa.io/en/latest/installation.html
