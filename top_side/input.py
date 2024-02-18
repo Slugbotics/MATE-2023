@@ -6,13 +6,15 @@ class controller:
     def __init__(self, index):
         self.right_stick = (0, 0)
         self.left_stick = (0, 0)
-        self.y_pressed = 0
+        self.a_pressed = 0
         self.x_pressed = 0
         self.b_pressed = 0
+        self.start_pressed = 0
         self.btn_tl = 0
         self.btn_tr = 0
         self.device = inputs.devices.gamepads[index]
         self._thread()
+        self.activate_arm = False
 
     def _run(self):
         while True:
@@ -30,8 +32,14 @@ class controller:
                     case "ABS_RY":
                         self.right_stick = (self.right_stick[0], event.state / 32768)
                         break
-                    case "BTN_NORTH":
-                        self.y_pressed = ('1' if event.state == 1 else '0')
+                    case "BTN_SELECT":
+                        if event.state == 1 and self.activate_arm == False:
+                            self.activate_arm = True
+                            self.start_pressed = '1'
+                        elif event.state ==1 and self.activate_arm == True:
+                            self.start_pressed = '0'
+                            self.activate_arm = False
+                        # self.a_pressed = (if event.state == 1: '1')
                         break
                     case "BTN_EAST":
                         self.b_pressed = ('1' if event.state == 1 else '0')

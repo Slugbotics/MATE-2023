@@ -30,16 +30,9 @@ bot_r_direction = (1/math.sqrt(2), 1/math.sqrt(2))
 #client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 #client.bind(("192.168.1.155", 8888))
 
-def logic(controller):
+def movement_logic(controller):
     translation = controller.left_stick
     rotation, v_translation = controller.right_stick
-
-    BTN_X = controller.x_pressed
-    BTN_Y = controller.y_pressed
-    BTN_B = controller.b_pressed
-
-    Left_Bumper = controller.btn_tl
-    Right_Bumper = controller.btn_tr
 
     # Normalization and dead zone for directional translation input
     translation_mag = magnitude(translation)
@@ -79,21 +72,47 @@ def logic(controller):
     top_back = round(v_translation * 50) + 50
 
     # Create and send packet
-    packet = ", ".join([str(front_left), str(front_right), str(back_left), str(back_right), str(top_front), str(top_back),
-                         str(BTN_X), str(BTN_Y), str(BTN_B), str(Left_Bumper), str(Right_Bumper)])
+    packet = ", ".join([str(front_left), str(front_right), str(back_left), str(back_right), str(top_front), str(top_back)])
+    return packet
+
+def arm_logic(controller):
+    x = controller.left_stick
+    y = controller.right_stick
+
+    BTN_X = controller.x_pressed
+    BTN_B = controller.b_pressed
+    BTN_START = controller.start_pressed
+
+    Left_Bumper = controller.btn_tl
+    Right_Bumper = controller.btn_tr
+
+
+    horizontal = x[0]
+    vertical = y[1]
+    if abs(horizontal) < 0.1:
+        horizontal = 0
+    if abs(vertical) < 0.1:
+        vertical = 0
+
+    horizontal = round((horizontal + 1) * 90)
+    vertical = round((vertical + 1) * 90)
+
+
+    # Create and send packet
+    packet = ", ".join([str(horizontal), str(vertical), str(BTN_X), str(BTN_B), str(BTN_START), str(Left_Bumper), str(Right_Bumper)])
     return packet
 
 #Rather than sending two packets, perhaps we have both of the methods add their string array onto the packet itself,
 #create a method for the packet and just have the other methods add to the packet
      
 while True:
-    mc_packet = logic(move_controller)
-    ac_packet = logic(arm_controller)
+    mc_packet = movement_logic(move_controller)
+    ac_packet = arm_logic(arm_controller)
 
-    packet = '['+ str(mc) + ']' + ', ' + mc_packet + ', ' + '[' + str(ac) + ']' + ', ' + ac_packet
+    packet = f'[{mc}], {mc_packet}, [{ac}], {ac_packet}'
+    # packet = '['+ str(mc) + ']' + ', ' + mc_packet + ', ' + '[' + str(ac) + ']' + ', ' + ac_packet
     print(packet)
-    # client.sendto(mc_packet.encode(), ("192.168.1.177", 8888))
-    # client.sendto(ac_packet.encode(), ("192.168.1.177", 8888))
+    # client.sendto(packet.encode(), ("192.168.1.177", 8888))
     # message, addr = client.recvfrom(2000)
     #print(message)
 
