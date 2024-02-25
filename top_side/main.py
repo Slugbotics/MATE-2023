@@ -3,6 +3,9 @@ import socket
 import time
 import math
 import logging
+import threading
+
+import gui
 
 def div_vec(v : tuple[float, float], n : float) -> tuple[float, float]:
     x, y = v
@@ -18,7 +21,8 @@ def dot(a : tuple[float, float], b : tuple[float, float]) -> float:
     return ax * bx + ay * by
 
 # Create logger object
-logging.basicConfig(filename="topside_rover.log", encoding="utf-8", level=logging.DEBUG)
+log_format = "%(asctime)s: %(message)s"
+logging.basicConfig(filename="topside_rover.log", format=log_format, encoding="utf-8", level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
 
 # Direction vectors for each of the corner motors
 top_l_direction = (1/math.sqrt(2), 1/math.sqrt(2))
@@ -31,6 +35,11 @@ server_addr = "192.168.1.155"
 server_port = 8888
 client.bind((server_addr, server_port))
 logging.info(f"Binding to {server_addr}:{server_port}")
+
+# Start GUI thread
+gui = threading.Thread(target=gui.main)
+gui.start()
+logging.info("Starting Driver GUI")
 
 while True:
     translation = input.left_stick
