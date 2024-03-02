@@ -5,7 +5,7 @@ import math
 
 mc = 0
 move_controller = controller(mc)
-ac = 0
+ac = 1
 arm_controller = controller(ac)
 
 def div_vec(v : tuple[float, float], n : float) -> tuple[float, float]:
@@ -27,8 +27,8 @@ top_r_direction = (-1/math.sqrt(2), 1/math.sqrt(2))
 bot_l_direction = (-1/math.sqrt(2), 1/math.sqrt(2))
 bot_r_direction = (1/math.sqrt(2), 1/math.sqrt(2))
 
-#client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#client.bind(("192.168.1.155", 8888))
+client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+client.bind(("192.168.1.155", 8888))
 
 def movement_logic(controller):
     translation = controller.left_stick
@@ -105,15 +105,15 @@ def arm_logic(controller):
 #create a method for the packet and just have the other methods add to the packet
      
 while True:
-    #mc_packet = movement_logic(move_controller)
+    mc_packet = movement_logic(move_controller)
     ac_packet = arm_logic(arm_controller)
 
-    #packet = f'[{mc}], {mc_packet}, [{ac}], {ac_packet}'
+    packet = f'[{mc}], {mc_packet}, [{ac}], {ac_packet}'
     packet = f'[{ac}], {ac_packet}'
-    # packet = '['+ str(mc) + ']' + ', ' + mc_packet + ', ' + '[' + str(ac) + ']' + ', ' + ac_packet
+    packet = '['+ str(mc) + ']' + ', ' + mc_packet + ', ' + '[' + str(ac) + ']' + ', ' + ac_packet
     print(packet)
-    # client.sendto(packet.encode(), ("192.168.1.177", 8888))
-    # message, addr = client.recvfrom(2000)
-    #print(message)
+    client.sendto(packet.encode(), ("192.168.1.177", 8888))
+    message, addr = client.recvfrom(2000)
+    print(message)
 
     time.sleep(0.1)
