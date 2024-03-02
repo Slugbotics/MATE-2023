@@ -1,5 +1,6 @@
 import inputs
 import threading
+import time
 
 #index is the controller value [First controller: 0, Second Controller: 1, etc.]
 class controller:
@@ -15,7 +16,6 @@ class controller:
         self.device = inputs.devices.gamepads[index]
         self._thread()
         self.activate_arm = False
-
     def _run(self):
         while True:
             for event in self.device.read():
@@ -39,14 +39,13 @@ class controller:
                         elif event.state ==1 and self.activate_arm == True:
                             self.start_pressed = '0'
                             self.activate_arm = False
-                        # self.a_pressed = (if event.state == 1: '1')
                         break
                     case "BTN_EAST":
                         self.b_pressed = ('1' if event.state == 1 else '0')
                     case "BTN_WEST":
                         self.x_pressed = ('1' if event.state == 1 else '0')
                     case "BTN_TL":
-                        self.btn_tl = ('1' if event.state == 1 else '0')
+                        self.btn_tl = ('1' if event.state == 1 else '0')                      
                     case "BTN_TR":
                         self.btn_tr = ('1' if event.state == 1 else '0')
                     case "SYN_REPORT": break # don't care YET

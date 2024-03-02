@@ -5,7 +5,7 @@ import math
 
 mc = 0
 move_controller = controller(mc)
-ac = 1
+ac = 0
 arm_controller = controller(ac)
 
 def div_vec(v : tuple[float, float], n : float) -> tuple[float, float]:
@@ -92,24 +92,24 @@ def arm_logic(controller):
     if abs(horizontal) < 0.1:
         horizontal = 0
     if abs(vertical) < 0.1:
-        vertical = 0
+        vertical = 0 
 
     horizontal = round((horizontal + 1) * 90)
     vertical = round((vertical + 1) * 90)
 
-
     # Create and send packet
-    packet = ", ".join([str(horizontal), str(vertical), str(BTN_X), str(BTN_B), str(BTN_START), str(Left_Bumper), str(Right_Bumper)])
+    packet = ", ".join([str(horizontal), str(vertical), str(BTN_X), str(BTN_B), str(Left_Bumper), str(Right_Bumper), str(BTN_START)])
     return packet
 
 #Rather than sending two packets, perhaps we have both of the methods add their string array onto the packet itself,
 #create a method for the packet and just have the other methods add to the packet
      
 while True:
-    mc_packet = movement_logic(move_controller)
+    #mc_packet = movement_logic(move_controller)
     ac_packet = arm_logic(arm_controller)
 
-    packet = f'[{mc}], {mc_packet}, [{ac}], {ac_packet}'
+    #packet = f'[{mc}], {mc_packet}, [{ac}], {ac_packet}'
+    packet = f'[{ac}], {ac_packet}'
     # packet = '['+ str(mc) + ']' + ', ' + mc_packet + ', ' + '[' + str(ac) + ']' + ', ' + ac_packet
     print(packet)
     # client.sendto(packet.encode(), ("192.168.1.177", 8888))
