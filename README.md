@@ -4,9 +4,12 @@
 
 ## Things To Do
 - preliminary testing for arm team's waterproof servo
-- get more servos (maybe waterproof them)
+✔️ get more servos (maybe waterproof them)
 - cad the gripper
-- figure out packet business
+✔️ figure out packet business
+- FINSIH CAD ALREADY CHRIS
+- FINISH THE CAD
+- PLEASE FINISH THE CAD
 
 ## Installation
 - Install virtualenv https://virtualenv.pypa.io/en/latest/installation.html
